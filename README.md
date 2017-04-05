@@ -1,0 +1,2 @@
+# cli
+Azure Workshops CLI
