@@ -1,13 +1,13 @@
 #!/usr/bin/env node --harmony
 'use strict';
 
-var chalk = require('chalk');
-var co = require('co');
-var prompt = require('co-prompt');
-var program = require('commander');
-var azure = require('azure');
-var msRest = require('ms-rest-azure');
-var workshops = require('./libs');
+const chalk = require('chalk');
+const co = require('co');
+const prompt = require('co-prompt');
+const program = require('commander');
+const azure = require('azure');
+const msRest = require('ms-rest-azure');
+const workshops = require('./libs');
 
 program
     .version('1.0.0')
@@ -17,7 +17,7 @@ program
 
 co(function* () {
     yield setWorkshop();
-    var {credentials, subscriptions} = yield azureLogin();
+    let {credentials, subscriptions} = yield azureLogin();
     yield setSubscription(subscriptions);
 
 }).then(() => {
@@ -57,7 +57,7 @@ function azureLogin() {
 function* setSubscription(subscriptions) {
     if (!confirmSubscription(subscriptions)) {
         displaySubscriptions(subscriptions);
-        var id = yield prompt('\n> ');
+        let id = yield prompt('\n> ');
         program.subscription = (subscriptions.filter((sub) => {
             return sub._id == id; 
         }))[0];
@@ -76,7 +76,7 @@ function displaySubscriptions(subscriptions) {
 function confirmSubscription(subscriptions) {
     if (!program.subscription) return false;
 
-    var filtered = subscriptions.filter((sub) => {
+    let filtered = subscriptions.filter((sub) => {
         return sub.id == program.subscription;
     });
 
