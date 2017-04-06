@@ -7,6 +7,7 @@ var prompt = require('co-prompt');
 var program = require('commander');
 var azure = require('azure');
 var msRest = require('ms-rest-azure');
+var workshops = require('./libs');
 
 program
     .version('1.0.0')
@@ -22,7 +23,7 @@ co(function* () {
 }).then(() => {
     switch (program.workshop) {
         case '1':
-            workshop1();
+            workshops.basicActiveDirectory(program);
             break;
     }
 
@@ -84,8 +85,4 @@ function confirmSubscription(subscriptions) {
 
     program.subscription = { id: program.subscription };
     return true;
-}
-
-function workshop1() {
-    console.log(chalk.bold.cyan('You entered: ') + program.workshop + ' ' + program.subscription);
 }
