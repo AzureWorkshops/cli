@@ -12,7 +12,7 @@ const configs = require('./libs');
 program
     .version('1.0.0')
     .option('-s, --subscription <id>', 'your subscription id')
-    .option('-c, --config <configuration number>', 'number of the configuration to setup')
+    .option('-c, --config <configuration id>', 'id of the base configuration')
     .parse(process.argv);
 
 co(function* () {
@@ -39,7 +39,7 @@ function* setConfig() {
 }
 
 function displayMenu() {
-    console.log(chalk.yellow('\nChoose a Configuration:'));
+    console.log(chalk.yellow('\nChoose a Base Configuration:'));
     console.log('    ' + chalk.cyan('1.') + ' Basic Active Directory');
 }
 
