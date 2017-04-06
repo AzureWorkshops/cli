@@ -7,39 +7,39 @@ const prompt = require('co-prompt');
 const program = require('commander');
 const azure = require('azure');
 const msRest = require('ms-rest-azure');
-const workshops = require('./libs');
+const configs = require('./libs');
 
 program
     .version('1.0.0')
     .option('-s, --subscription <id>', 'your subscription id')
-    .option('-w, --workshop <workshop number>', 'workshop number to build')
+    .option('-c, --config <configuration number>', 'number of the configuration to setup')
     .parse(process.argv);
 
 co(function* () {
-    yield setWorkshop();
+    yield setConfig();
     let {credentials, subscriptions} = yield azureLogin();
     yield setSubscription(subscriptions);
 
 }).then(() => {
-    switch (program.workshop) {
+    switch (program.config) {
         case '1':
-            workshops.basicActiveDirectory(program);
+            configs.basicActiveDirectory(program);
             break;
     }
 
     process.exit(1);
 });
 
-function* setWorkshop() {
-    if (!program.workshop) {
+function* setConfig() {
+    if (!program.config) {
         displayMenu();
 
-        program.workshop = yield prompt('\n> ');
+        program.config = yield prompt('\n> ');
     }
 }
 
 function displayMenu() {
-    console.log(chalk.yellow('\nChoose a Workshop:'));
+    console.log(chalk.yellow('\nChoose a Configuration:'));
     console.log('    ' + chalk.cyan('1.') + ' Basic Active Directory');
 }
 
