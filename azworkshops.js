@@ -8,6 +8,16 @@ const program = require('commander');
 const azure = require('azure');
 const msRest = require('ms-rest-azure');
 const configs = require('./libs');
+const os = require('os');
+const request = require('superagent');
+
+let client = {
+    OS: os.type(),
+    OS_Version: os.release(),
+    OS_Full: os.type() + ' ' + os.release()
+};
+
+log('info', client);
 
 program
     .version('1.0.0')
@@ -16,10 +26,14 @@ program
     .parse(process.argv);
 
 co(function* () {
-    yield setConfig();
-    let {credentials, subscriptions} = yield azureLogin();
-    yield setSubscription(subscriptions);
-
+    try {
+        yield setConfig();
+        let { credentials, subscriptions } = yield azureLogin();
+        yield setSubscription(subscriptions);
+    }
+    catch (exc) {
+        yield captureError(exc);
+    }
 }).then(() => {
     switch (program.config) {
         case '1':
@@ -27,7 +41,7 @@ co(function* () {
             break;
     }
 
-    process.exit(1);
+    process.exit(0);
 });
 
 function* setConfig() {
@@ -36,6 +50,7 @@ function* setConfig() {
 
         program.config = yield prompt('\n> ');
     }
+
 }
 
 function displayMenu() {
@@ -49,7 +64,7 @@ function azureLogin() {
         msRest.interactiveLogin((err, credentials, subscriptions) => {
             if (err) reject(err);
 
-            resolve({credentials, subscriptions});
+            resolve({ credentials, subscriptions });
         });
     });
 }
@@ -59,7 +74,7 @@ function* setSubscription(subscriptions) {
         displaySubscriptions(subscriptions);
         let id = yield prompt('\n> ');
         program.subscription = (subscriptions.filter((sub) => {
-            return sub._id == id; 
+            return sub._id == id;
         }))[0];
     }
 }
@@ -67,9 +82,9 @@ function* setSubscription(subscriptions) {
 function displaySubscriptions(subscriptions) {
     console.log(chalk.yellow('\nChoose a Subscription:'));
 
-    for(var i = 0; i < subscriptions.length; i++) {
-        subscriptions[i]._id = i+1;
-        console.log(chalk.cyan('    ' + ((i*1)+1) + '.') + ' ' + subscriptions[i].name + ' ' + chalk.gray('(' + subscriptions[i].id + ')'));
+    for (var i = 0; i < subscriptions.length; i++) {
+        subscriptions[i]._id = i + 1;
+        console.log(chalk.cyan('    ' + ((i * 1) + 1) + '.') + ' ' + subscriptions[i].name + ' ' + chalk.gray('(' + subscriptions[i].id + ')'));
     }
 }
 
@@ -85,4 +100,26 @@ function confirmSubscription(subscriptions) {
 
     program.subscription = { id: program.subscription };
     return true;
+}
+
+function log(type, data) {
+    return new Promise((resolve, reject) => {
+         request
+            .post('https://azworkshops.azurewebsites.net/api/loggly')
+            .send({
+                loggly: {
+                    type: type,
+                    data: data
+                }
+            })
+            .then(function() { resolve(); })
+            .catch(function (err) { 
+                reject();
+                console.error('Problem sending telemetry.'); 
+            });
+    });
+}
+
+function captureError(err) {
+   return log('error', err).then(function() { process.exit(1); });
 }
