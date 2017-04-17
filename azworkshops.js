@@ -7,7 +7,7 @@ const prompt = require('co-prompt');
 const program = require('commander');
 const azure = require('azure');
 const msRest = require('ms-rest-azure');
-const configs = require('./libs');
+const services = require('./libs/services');
 const os = require('os');
 const request = require('superagent');
 
@@ -37,7 +37,7 @@ co(function* () {
 }).then(() => {
     switch (program.config) {
         case '1':
-            configs.basicActiveDirectory(program);
+            services.basicActiveDirectory(program);
             break;
     }
 
