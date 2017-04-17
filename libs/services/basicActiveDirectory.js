@@ -1,6 +1,13 @@
-var chalk = require('chalk');
-var azure = require('azure');
+'use strict';
 
-module.exports = function(opts) {
-    console.log(chalk.bold.cyan('You entered: ') + opts.config + ' ' + opts.subscription);
+const resourceGroup = require('../utils/resourceGroups');
+
+module.exports = function (program, resolve, reject) {
+    var groups = new resourceGroup(program.credentials, program.subscription.id);
+
+    groups.create('TestGroup', 'East US', null).then(() => {
+        resolve();
+    }).catch((err) => {
+        reject(err);
+    });
 }

@@ -1,0 +1,330 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualMachines_dc1_name": {
+            "defaultValue": "dc1",
+            "type": "String"
+        },
+        "virtualMachines_utility_name": {
+            "defaultValue": "utility",
+            "type": "String"
+        },
+        "networkInterfaces_dc1933_name": {
+            "defaultValue": "dc1933",
+            "type": "String"
+        },
+        "networkInterfaces_utility721_name": {
+            "defaultValue": "utility721",
+            "type": "String"
+        },
+        "publicIPAddresses_utility_ip_name": {
+            "defaultValue": "utility-ip",
+            "type": "String"
+        },
+        "virtualNetworks_azure_local_lab_vnet_name": {
+            "defaultValue": "azure-local-lab-vnet",
+            "type": "String"
+        },
+        "storageAccounts_azurelabdata2016_name": {
+            "defaultValue": "azurelabdata2016",
+            "type": "String"
+        },
+        "storageAccounts_azurelabdiags2016_name": {
+            "defaultValue": "azurelabdiags2016",
+            "type": "String"
+        },
+        "extensions_AddAccount_name": {
+            "defaultValue": "dc1/AddAccount",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "comments": "Generalized from resource: '/subscriptions/db229125-4ff9-4cc4-80ac-6ceaef8661ef/resourceGroups/azure-local-lab/providers/Microsoft.Compute/virtualMachines/dc1'.",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[parameters('virtualMachines_dc1_name')]",
+            "apiVersion": "2016-04-30-preview",
+            "location": "eastus",
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_DS1_v2"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "MicrosoftWindowsServer",
+                        "offer": "WindowsServer",
+                        "sku": "2016-Datacenter",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Windows",
+                        "name": "[parameters('virtualMachines_dc1_name')]",
+                        "createOption": "FromImage",
+                        "vhd": {
+                            "uri": "[concat('https', '://', parameters('storageAccounts_azurelabdata2016_name'), '.blob.core.windows.net', concat('/vhds/', parameters('virtualMachines_dc1_name'),'20170413135739.vhd'))]"
+                        },
+                        "caching": "ReadWrite"
+                    },
+                    "dataDisks": [
+                        {
+                            "lun": 0,
+                            "name": "[concat(parameters('virtualMachines_dc1_name'),'-data')]",
+                            "createOption": "Empty",
+                            "vhd": {
+                                "uri": "[concat('https', '://', parameters('storageAccounts_azurelabdata2016_name'), '.blob.core.windows.net', concat('/vhds/', parameters('virtualMachines_dc1_name'),'-data.vhd'))]"
+                            },
+                            "caching": "ReadOnly",
+                            "diskSizeGB": 1023
+                        }
+                    ]
+                },
+                "osProfile": {
+                    "computerName": "[parameters('virtualMachines_dc1_name')]",
+                    "adminUsername": "localadmin",
+                    "windowsConfiguration": {
+                        "provisionVMAgent": true,
+                        "enableAutomaticUpdates": true
+                    },
+                    "secrets": []
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_dc1933_name'))]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true,
+                        "storageUri": "[concat('https', '://', parameters('storageAccounts_azurelabdiags2016_name'), '.blob.core.windows.net', '/')]"
+                    }
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_azurelabdata2016_name'))]",
+                "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_dc1933_name'))]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_azurelabdiags2016_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/db229125-4ff9-4cc4-80ac-6ceaef8661ef/resourceGroups/azure-local-lab/providers/Microsoft.Compute/virtualMachines/utility'.",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[parameters('virtualMachines_utility_name')]",
+            "apiVersion": "2016-04-30-preview",
+            "location": "eastus",
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_DS1_v2"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "MicrosoftWindowsServer",
+                        "offer": "WindowsServer",
+                        "sku": "2016-Datacenter",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Windows",
+                        "name": "[parameters('virtualMachines_utility_name')]",
+                        "createOption": "FromImage",
+                        "vhd": {
+                            "uri": "[concat('https', '://', parameters('storageAccounts_azurelabdata2016_name'), '.blob.core.windows.net', concat('/vhds/', parameters('virtualMachines_utility_name'),'20170413140113.vhd'))]"
+                        },
+                        "caching": "ReadWrite"
+                    },
+                    "dataDisks": [
+                        {
+                            "lun": 0,
+                            "name": "[concat(parameters('virtualMachines_utility_name'),'-data')]",
+                            "createOption": "Empty",
+                            "vhd": {
+                                "uri": "[concat('https', '://', parameters('storageAccounts_azurelabdata2016_name'), '.blob.core.windows.net', concat('/vhds/', parameters('virtualMachines_utility_name'),'-data.vhd'))]"
+                            },
+                            "caching": "ReadOnly",
+                            "diskSizeGB": 1023
+                        }
+                    ]
+                },
+                "osProfile": {
+                    "computerName": "[parameters('virtualMachines_utility_name')]",
+                    "adminUsername": "localadmin",
+                    "windowsConfiguration": {
+                        "provisionVMAgent": true,
+                        "enableAutomaticUpdates": true
+                    },
+                    "secrets": []
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_utility721_name'))]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true,
+                        "storageUri": "[concat('https', '://', parameters('storageAccounts_azurelabdiags2016_name'), '.blob.core.windows.net', '/')]"
+                    }
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_azurelabdata2016_name'))]",
+                "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_utility721_name'))]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_azurelabdiags2016_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/db229125-4ff9-4cc4-80ac-6ceaef8661ef/resourceGroups/azure-local-lab/providers/Microsoft.Network/networkInterfaces/dc1933'.",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[parameters('networkInterfaces_dc1933_name')]",
+            "apiVersion": "2017-03-01",
+            "location": "eastus",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAddress": "10.3.1.4",
+                            "privateIPAllocationMethod": "Static",
+                            "subnet": {
+                                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_azure_local_lab_vnet_name')), '/subnets/default')]"
+                            }
+                        }
+                    }
+                ],
+                "dnsSettings": {
+                    "dnsServers": []
+                },
+                "enableIPForwarding": false
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_azure_local_lab_vnet_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/db229125-4ff9-4cc4-80ac-6ceaef8661ef/resourceGroups/azure-local-lab/providers/Microsoft.Network/networkInterfaces/utility721'.",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[parameters('networkInterfaces_utility721_name')]",
+            "apiVersion": "2017-03-01",
+            "location": "eastus",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAddress": "10.3.1.5",
+                            "privateIPAllocationMethod": "Static",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_utility_ip_name'))]"
+                            },
+                            "subnet": {
+                                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_azure_local_lab_vnet_name')), '/subnets/default')]"
+                            }
+                        }
+                    }
+                ],
+                "dnsSettings": {
+                    "dnsServers": []
+                },
+                "enableIPForwarding": false
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_utility_ip_name'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_azure_local_lab_vnet_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/db229125-4ff9-4cc4-80ac-6ceaef8661ef/resourceGroups/azure-local-lab/providers/Microsoft.Network/publicIPAddresses/utility-ip'.",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[parameters('publicIPAddresses_utility_ip_name')]",
+            "apiVersion": "2017-03-01",
+            "location": "eastus",
+            "properties": {
+                "publicIPAllocationMethod": "Static",
+                "idleTimeoutInMinutes": 4
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/db229125-4ff9-4cc4-80ac-6ceaef8661ef/resourceGroups/azure-local-lab/providers/Microsoft.Network/virtualNetworks/azure-local-lab-vnet'.",
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "[parameters('virtualNetworks_azure_local_lab_vnet_name')]",
+            "apiVersion": "2017-03-01",
+            "location": "eastus",
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "10.3.1.0/24"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "default",
+                        "properties": {
+                            "addressPrefix": "10.3.1.0/24"
+                        }
+                    }
+                ],
+                "virtualNetworkPeerings": []
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/db229125-4ff9-4cc4-80ac-6ceaef8661ef/resourceGroups/azure-local-lab/providers/Microsoft.Storage/storageAccounts/azurelabdata2016'.",
+            "type": "Microsoft.Storage/storageAccounts",
+            "sku": {
+                "name": "Premium_LRS",
+                "tier": "Premium"
+            },
+            "kind": "Storage",
+            "name": "[parameters('storageAccounts_azurelabdata2016_name')]",
+            "apiVersion": "2016-01-01",
+            "location": "eastus",
+            "tags": {},
+            "properties": {},
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/db229125-4ff9-4cc4-80ac-6ceaef8661ef/resourceGroups/azure-local-lab/providers/Microsoft.Storage/storageAccounts/azurelabdiags2016'.",
+            "type": "Microsoft.Storage/storageAccounts",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "Storage",
+            "name": "[parameters('storageAccounts_azurelabdiags2016_name')]",
+            "apiVersion": "2016-01-01",
+            "location": "eastus",
+            "tags": {},
+            "properties": {},
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/db229125-4ff9-4cc4-80ac-6ceaef8661ef/resourceGroups/azure-local-lab/providers/Microsoft.Compute/virtualMachines/dc1/extensions/AddAccount'.",
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[parameters('extensions_AddAccount_name')]",
+            "apiVersion": "2016-04-30-preview",
+            "location": "eastus",
+            "properties": {
+                "publisher": "Microsoft.Compute",
+                "type": "CustomScriptExtension",
+                "typeHandlerVersion": "1.4",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "fileUris": [
+                        "[https://raw.githubusercontent.com/AzureWorkshops/cli/master/scripts/create-ad-users.ps1]"
+                    ],
+                    "commandToExecute": "powershell -ExecutionPolicy Unrestricted -file create-ad-users.ps1 "
+                },
+                "protectedSettings": {}
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachines_dc1_name'))]"
+            ]
+        }
+    ]
+}

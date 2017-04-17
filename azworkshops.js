@@ -17,7 +17,8 @@ let client = {
     OS_Full: os.type() + ' ' + os.release()
 };
 
-log('info', client);
+let isTx = true;
+log('info', client).then(() => { isTx = false; });
 
 program
     .version('1.0.0')
@@ -29,19 +30,28 @@ co(function* () {
     try {
         yield setConfig();
         let { credentials, subscriptions } = yield azureLogin();
+        program.credentials = credentials;
         yield setSubscription(subscriptions);
     }
     catch (exc) {
         yield captureError(exc);
     }
 }).then(() => {
-    switch (program.config) {
-        case '1':
-            services.basicActiveDirectory(program);
-            break;
-    }
+    return new Promise((resolve, reject) => {
+        
+        switch (program.config) {
+            case '1':
+                services.basicActiveDirectory(program, resolve, reject);
+                break;
+        }
 
-    process.exit(0);
+    }).catch((err) => {
+        isTx = true;
+        captureError(err).then(() => { isTx = false; });
+    });
+}).then(() => {
+    // co stalls the process, so force exit
+    if (!isTx) process.exit(0);
 });
 
 function* setConfig() {
@@ -104,7 +114,7 @@ function confirmSubscription(subscriptions) {
 
 function log(type, data) {
     return new Promise((resolve, reject) => {
-         request
+        request
             .post('https://azworkshops.azurewebsites.net/api/loggly')
             .send({
                 loggly: {
@@ -112,14 +122,17 @@ function log(type, data) {
                     data: data
                 }
             })
-            .then(function() { resolve(); })
-            .catch(function (err) { 
+            .then(() => { resolve(); })
+            .catch((err) => {
                 reject();
-                console.error('Problem sending telemetry.'); 
+                console.error('Problem sending telemetry.');
             });
     });
 }
 
 function captureError(err) {
-   return log('error', err).then(function() { process.exit(1); });
+    return log('error', err).then(() => { 
+        console.log(chalk.red('ERROR: ' + err));
+        process.exit(1); 
+    });
 }
