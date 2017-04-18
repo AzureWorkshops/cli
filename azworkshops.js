@@ -37,8 +37,10 @@ co(function* () {
         yield captureError(exc);
     }
 }).then(() => {
+    process.stdout.write('\n');
+
     return new Promise((resolve, reject) => {
-        
+
         switch (program.config) {
             case '1':
                 services.basicActiveDirectory(program, resolve, reject);
@@ -64,17 +66,16 @@ function* setConfig() {
 }
 
 function displayMenu() {
-    console.log(chalk.yellow('\nChoose a Base Configuration:'));
-    console.log('    ' + chalk.cyan('1.') + ' Basic Active Directory');
+    process.stdout.write(chalk.yellow('\nChoose a Base Configuration:') + '\n');
+    process.stdout.write('    ' + chalk.cyan('1.') + ' Basic Active Directory' + '\n');
 }
 
 function azureLogin() {
     return new Promise((resolve, reject) => {
-        console.log('\n');
+        process.stdout.write('\n');
         msRest.interactiveLogin((err, credentials, subscriptions) => {
-            if (err) reject(err);
-console.log(JSON.stringify(credentials));
-            resolve({ credentials, subscriptions });
+            if (err) { reject(err); }
+            else { resolve({ credentials, subscriptions }); }
         });
     });
 }
@@ -90,11 +91,11 @@ function* setSubscription(subscriptions) {
 }
 
 function displaySubscriptions(subscriptions) {
-    console.log(chalk.yellow('\nChoose a Subscription:'));
+    process.stdout.write(chalk.yellow('\nChoose a Subscription:') + '\n');
 
     for (var i = 0; i < subscriptions.length; i++) {
         subscriptions[i]._id = i + 1;
-        console.log(chalk.cyan('    ' + ((i * 1) + 1) + '.') + ' ' + subscriptions[i].name + ' ' + chalk.gray('(' + subscriptions[i].id + ')'));
+        process.stdout.write(chalk.cyan('    ' + ((i * 1) + 1) + '.') + ' ' + subscriptions[i].name + ' ' + chalk.gray('(' + subscriptions[i].id + ')') + '\n');
     }
 }
 
@@ -125,14 +126,14 @@ function log(type, data) {
             .then(() => { resolve(); })
             .catch((err) => {
                 reject();
-                console.error('Problem sending telemetry.');
+                process.stdout.write(chalk.red('Problem sending telemetry.'));
             });
     });
 }
 
 function captureError(err) {
-    return log('error', err).then(() => { 
-        console.log(chalk.red('ERROR: ' + err));
-        process.exit(1); 
+    return log('error', err).then(() => {
+        process.stdout.write(chalk.red('ERROR: ' + err));
+        process.exit(1);
     });
 }
