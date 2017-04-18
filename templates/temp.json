@@ -29,7 +29,7 @@
                         "name": "dc1",
                         "createOption": "FromImage",
                         "vhd": {
-                            "uri": "[concat('https', '://azwdata', parameters('timestamp'), '.blob.core.windows.net', '/vhds/dc1.vhd')]"
+                            "uri": "[concat('https', '://azlabdata', parameters('timestamp'), '.blob.core.windows.net', '/vhds/dc1.vhd')]"
                         },
                         "caching": "ReadWrite"
                     },
@@ -39,7 +39,7 @@
                             "name": "dc1-data",
                             "createOption": "Empty",
                             "vhd": {
-                                "uri": "[concat('https', '://azwdata', parameters('timestamp'), '.blob.core.windows.net', '/vhds/dc1-data.vhd')]"
+                                "uri": "[concat('https', '://azlabdata', parameters('timestamp'), '.blob.core.windows.net', '/vhds/dc1-data.vhd')]"
                             },
                             "caching": "ReadOnly",
                             "diskSizeGB": 1023
@@ -66,14 +66,14 @@
                 "diagnosticsProfile": {
                     "bootDiagnostics": {
                         "enabled": true,
-                        "storageUri": "[concat('https', '://azwdiags', parameters('timestamp'), '.blob.core.windows.net', '/')]"
+                        "storageUri": "[concat('https', '://azlabdiags', parameters('timestamp'), '.blob.core.windows.net', '/')]"
                     }
                 }
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts', concat('azwdata', parameters('timestamp')))]",
+                "[resourceId('Microsoft.Storage/storageAccounts', concat('azlabdata', parameters('timestamp')))]",
                 "[resourceId('Microsoft.Network/networkInterfaces', 'dc1')]",
-                "[resourceId('Microsoft.Storage/storageAccounts', concat('azwdiags', parameters('timestamp')))]"
+                "[resourceId('Microsoft.Storage/storageAccounts', concat('azlabdiags', parameters('timestamp')))]"
             ]
         },
         {
@@ -97,7 +97,7 @@
                         "name": "utility",
                         "createOption": "FromImage",
                         "vhd": {
-                            "uri": "[concat('https', '://azwdata', parameters('timestamp'), '.blob.core.windows.net', '/vhds/utility.vhd')]"
+                            "uri": "[concat('https', '://azlabdata', parameters('timestamp'), '.blob.core.windows.net', '/vhds/utility.vhd')]"
                         },
                         "caching": "ReadWrite"
                     },
@@ -107,7 +107,7 @@
                             "name": "utility-data",
                             "createOption": "Empty",
                             "vhd": {
-                                "uri": "[concat('https', '://azwdata', parameters('timestamp'), '.blob.core.windows.net', '/vhds/utility-data.vhd')]"
+                                "uri": "[concat('https', '://azlabdata', parameters('timestamp'), '.blob.core.windows.net', '/vhds/utility-data.vhd')]"
                             },
                             "caching": "ReadOnly",
                             "diskSizeGB": 1023
@@ -134,14 +134,14 @@
                 "diagnosticsProfile": {
                     "bootDiagnostics": {
                         "enabled": true,
-                        "storageUri": "[concat('https', '://azwdiags', parameters('timestamp'), '.blob.core.windows.net', '/')]"
+                        "storageUri": "[concat('https', '://azlabdiags', parameters('timestamp'), '.blob.core.windows.net', '/')]"
                     }
                 }
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts', concat('azwdata', parameters('timestamp')))]",
-                "[resourceId('Microsoft.Network/networkInterfaces', 'utility1')]",
-                "[resourceId('Microsoft.Storage/storageAccounts', concat('azwdiags', parameters('timestamp')))]"
+                "[resourceId('Microsoft.Storage/storageAccounts', concat('azlabdata', parameters('timestamp')))]",
+                "[resourceId('Microsoft.Network/networkInterfaces', 'utility')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', concat('azlabdiags', parameters('timestamp')))]"
             ]
         },
         {
@@ -157,7 +157,7 @@
                             "privateIPAddress": "10.3.1.4",
                             "privateIPAllocationMethod": "Static",
                             "subnet": {
-                                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks', 'vnet'), '/subnets/default')]"
+                                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks', concat('vnet', parameters('timestamp'))), '/subnets/default')]"
                             }
                         }
                     }
@@ -168,12 +168,12 @@
                 "enableIPForwarding": false
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks', 'vnet')]"
+                "[resourceId('Microsoft.Network/virtualNetworks', concat('vnet', parameters('timestamp')))]"
             ]
         },
         {
             "type": "Microsoft.Network/networkInterfaces",
-            "name": "utility1",
+            "name": "utility",
             "apiVersion": "2017-03-01",
             "location": "eastus",
             "properties": {
@@ -187,7 +187,7 @@
                                 "id": "[resourceId('Microsoft.Network/publicIPAddresses', 'utility')]"
                             },
                             "subnet": {
-                                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks', 'vnet'), '/subnets/default')]"
+                                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks', concat('vnet', parameters('timestamp'))), '/subnets/default')]"
                             }
                         }
                     }
@@ -199,7 +199,7 @@
             },
             "dependsOn": [
                 "[resourceId('Microsoft.Network/publicIPAddresses', 'utility')]",
-                "[resourceId('Microsoft.Network/virtualNetworks', 'vnet')]"
+                "[resourceId('Microsoft.Network/virtualNetworks', concat('vnet', parameters('timestamp')))]"
             ]
         },
         {
@@ -215,7 +215,7 @@
         },
         {
             "type": "Microsoft.Network/virtualNetworks",
-            "name": "vnet",
+            "name": "[concat('vnet', parameters('timestamp'))]",
             "apiVersion": "2017-03-01",
             "location": "eastus",
             "properties": {
@@ -243,7 +243,7 @@
                 "tier": "Premium"
             },
             "kind": "Storage",
-            "name": "[concat('azwdata', parameters('timestamp'))]",
+            "name": "[concat('azlabdata', parameters('timestamp'))]",
             "apiVersion": "2016-01-01",
             "location": "eastus",
             "tags": {},
@@ -257,7 +257,7 @@
                 "tier": "Standard"
             },
             "kind": "Storage",
-            "name": "[concat('azwdiags', parameters('timestamp'))]",
+            "name": "[concat('azlabdiags', parameters('timestamp'))]",
             "apiVersion": "2016-01-01",
             "location": "eastus",
             "tags": {},

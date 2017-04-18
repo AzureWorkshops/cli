@@ -73,7 +73,7 @@ function azureLogin() {
         console.log('\n');
         msRest.interactiveLogin((err, credentials, subscriptions) => {
             if (err) reject(err);
-
+console.log(JSON.stringify(credentials));
             resolve({ credentials, subscriptions });
         });
     });

@@ -1,20 +1,29 @@
 'use strict';
 
 const resourceManagement = require('azure-arm-resource');
-const chalk = require('chalk');
+const fs = require('fs');
+const time = require('./time');
 
-var _client;
-function _create(name, params) {
+let _client = null;
+function _create(name, groupParams, params) {
+    name = 'azworkshops_' + name + '_' + time();
+
     return new Promise((resolve, reject) => {
         _checkExistence(name).then((exists) => {
             if (exists) {
                 reject('Resource Group already exists.')
             } else {
-                _client.resourceGroups.createOrUpdate(name, params, (err, result, request, response) => {
-                    if (err) reject(err);
-                    else
-                        resolve(result);
-                });
+                _client.resourceGroups.createOrUpdate(name, groupParams)
+                    .then(() => {
+                        _client.deployments.createOrUpdate(name, name, params, (err, result, request, response) => {
+                            if (err) { reject(err); }
+                            else {
+                                resolve(name);
+                            }
+                        });
+                    }).catch((err) => {
+                        reject(err);
+                    });
             }
         });
     });
@@ -25,33 +34,50 @@ function _checkExistence(name) {
 }
 
 module.exports = class ResourceGroups {
-
-    constructor(credentials, subscription, callback) {
-        _client = new resourceManagement.ResourceManagementClient(credentials, subscription);
+    constructor(credentials, subscriptionId, callback) {
+        _client = new resourceManagement.ResourceManagementClient(credentials, subscriptionId);
     }
 
     create(name, location, template, callback) {
-        var params = {
-            location: location/*,
-            properties: {
-                template: template
-            }*/
+        var templateContent = JSON.parse(fs.readFileSync(template, 'utf8'));
+
+        var groupParams = {
+            location: location
         };
 
-        return _create(name, params);
-    }
-
-    createWithUri(name, location, templateUri, templateVer, callback) {
         var params = {
-            location: location,
             properties: {
-                templateLink: {
-                    uri: templateUri,
-                    contentVersion: templateVer
+                template: templateContent,
+                mode: 'Incremental',
+                parameters: {
+                    timestamp: {
+                        value: time()
+                    }
                 }
             }
         };
 
-        return _create(name, params);
+        return _create(name, groupParams, params);
+    }
+
+    createWithUri(name, location, templateUri, templateVer, callback) {
+        var groupParams = {
+            location: location
+        };
+
+        var params = {
+            properties: {
+                mode: 'Incremental',
+                templateLink: {
+                    uri: templateUri,
+                    contentVersion: templateVer,
+                    parameters: {
+                        timestamp: time()
+                    }
+                }
+            }
+        };
+
+        return _create(name, groupParams, params);
     }
 }
