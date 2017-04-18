@@ -51,13 +51,12 @@ function _checkExistence(name) {
 }
 
 module.exports = class ResourceGroups {
-    constructor(credentials, subscriptionId, callback) {
+    constructor(credentials, subscriptionId) {
         _client = new resourceManagement.ResourceManagementClient(credentials, subscriptionId);
         Spinner.setDefaultSpinnerString(0);
-        //Spinner.setDefaultSpinnerDelay(5000);        
     }
 
-    create(name, location, template, callback) {
+    create(name, location, template) {
         var templateContent = JSON.parse(fs.readFileSync(template, 'utf8'));
 
         var groupParams = {
@@ -79,7 +78,7 @@ module.exports = class ResourceGroups {
         return _create(name, groupParams, params);
     }
 
-    createWithUri(name, location, templateUri, templateVer, callback) {
+    createWithUri(name, location, templateUri, templateVer) {
         var groupParams = {
             location: location
         };

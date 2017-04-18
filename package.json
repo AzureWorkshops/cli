@@ -31,8 +31,6 @@
     "commander": "^2.9.0",
     "moment": "^2.18.1",
     "ms-rest-azure": "^2.1.0",
-    "promise-sequence": "^0.2.3",
-    "promisequence": "^1.1.6",
     "superagent": "^3.5.2"
   }
 }

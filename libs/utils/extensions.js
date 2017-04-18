@@ -22,7 +22,6 @@ module.exports = class Extensions {
     constructor(credentials, subscriptionId) {
         _client = new computeManagement(credentials, subscriptionId);
         Spinner.setDefaultSpinnerString(0);
-        //Spinner.setDefaultSpinnerDelay(5000);
     }
 
     addPowershellExtension(extensionName, resourceGroup, vmName, location, fileUris, commandToExecute, customMessage) {
