@@ -2,15 +2,13 @@
 
 const resourceGroups = require('../utils/resourceGroups');
 const extensions = require('../utils/extensions');
-const sequence = require('promise-sequence');
-const promiseq = require('promisequence');
 
 module.exports = function (program, resolve, reject) {
     let groups = new resourceGroups(program.credentials, program.subscription.id);
     let exts = new extensions(program.credentials, program.subscription.id);
     let returnObj = {};
 
-    groups.create('basicAD', 'East US', './templates/template.json')
+    groups.createWithUri('basicAD', 'East US', 'https://raw.githubusercontent.com/AzureWorkshops/cli/master/templates/template.json', '1.0.1.0')
         .then((group) => {
             returnObj.ResourceGroup = group; 
             return Promise.resolve();

@@ -56,6 +56,7 @@ module.exports = class ResourceGroups {
         Spinner.setDefaultSpinnerString(0);
     }
 
+    // NOTE: only use when testing locally as templates are loaded remotely from repo
     create(name, location, template) {
         var templateContent = JSON.parse(fs.readFileSync(template, 'utf8'));
 
@@ -88,9 +89,11 @@ module.exports = class ResourceGroups {
                 mode: 'Complete',
                 templateLink: {
                     uri: templateUri,
-                    contentVersion: templateVer,
-                    parameters: {
-                        timestamp: time()
+                    contentVersion: templateVer
+                },
+                parameters: {
+                    timestamp: {
+                        value: time()
                     }
                 }
             }
