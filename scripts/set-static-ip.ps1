@@ -1,11 +1,22 @@
+[CmdletBinding()]
+Param(
+    [Parameter(Mandatory=$False)]
+    [string]$IPs
+)
+
 # Get current IP configuration and set it to static IP
 $ifconfig = (Get-NetIPConfiguration)[0];
 
 $IP = $ifconfig.IPv4Address.IPAddress;
 $MaskBits = 24; # This means subnet mask = 255.255.255.0
 $Gateway = $ifconfig.IPv4DefaultGateway.NextHop;
-$Dns = $ifconfig.DNSServer.ServerAddresses;
 $IPType = "IPv4";
+
+$DNS = $ifconfig.DNSServer.ServerAddresses;
+$IParr = $IPs.Split(',');
+for($i=$IParr.Length - 1; $i -ge 0; $i--) {
+    $DNS = ,$IParr[$i] + $DNS;
+}
 
 # Retrieve the network adapter that you want to configure
 $adapter = Get-NetAdapter | ? {$_.Status -eq "up"}
