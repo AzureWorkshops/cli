@@ -1,9 +1,12 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.1.0",
+    "contentVersion": "1.0.2.0",
     "parameters": {
         "timestamp": {
             "type":"string"
+        },
+        "location": {
+            "type": "string"
         }
     },
     "variables": {},
@@ -12,7 +15,7 @@
             "type": "Microsoft.Compute/virtualMachines",
             "name": "dc1",
             "apiVersion": "2016-04-30-preview",
-            "location": "eastus",
+            "location": "[parameters('location')]",
             "properties": {
                 "hardwareProfile": {
                     "vmSize": "Standard_DS1_v2"
@@ -80,7 +83,7 @@
             "type": "Microsoft.Compute/virtualMachines",
             "name": "utility",
             "apiVersion": "2016-04-30-preview",
-            "location": "eastus",
+            "location": "[parameters('location')]",
             "properties": {
                 "hardwareProfile": {
                     "vmSize": "Standard_DS1_v2"
@@ -148,7 +151,7 @@
             "type": "Microsoft.Network/networkInterfaces",
             "name": "dc1",
             "apiVersion": "2017-03-01",
-            "location": "eastus",
+            "location": "[parameters('location')]",
             "properties": {
                 "ipConfigurations": [
                     {
@@ -175,7 +178,7 @@
             "type": "Microsoft.Network/networkInterfaces",
             "name": "utility1",
             "apiVersion": "2017-03-01",
-            "location": "eastus",
+            "location": "[parameters('location')]",
             "properties": {
                 "ipConfigurations": [
                     {
@@ -206,7 +209,7 @@
             "type": "Microsoft.Network/publicIPAddresses",
             "name": "utility",
             "apiVersion": "2017-03-01",
-            "location": "eastus",
+            "location": "[parameters('location')]",
             "properties": {
                 "publicIPAllocationMethod": "Static",
                 "idleTimeoutInMinutes": 4
@@ -217,7 +220,7 @@
             "type": "Microsoft.Network/virtualNetworks",
             "name": "vnet",
             "apiVersion": "2017-03-01",
-            "location": "eastus",
+            "location": "[parameters('location')]",
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": [
@@ -245,7 +248,7 @@
             "kind": "Storage",
             "name": "[concat('azwdata', parameters('timestamp'))]",
             "apiVersion": "2016-01-01",
-            "location": "eastus",
+            "location": "[parameters('location')]",
             "tags": {},
             "properties": {},
             "dependsOn": []
@@ -259,7 +262,7 @@
             "kind": "Storage",
             "name": "[concat('azwdiags', parameters('timestamp'))]",
             "apiVersion": "2016-01-01",
-            "location": "eastus",
+            "location": "[parameters('location')]",
             "tags": {},
             "properties": {},
             "dependsOn": []
