@@ -71,6 +71,9 @@ module.exports = class ResourceGroups {
                 parameters: {
                     timestamp: {
                         value: time()
+                    },
+                    location: {
+                        value: location
                     }
                 }
             }
@@ -94,6 +97,9 @@ module.exports = class ResourceGroups {
                 parameters: {
                     timestamp: {
                         value: time()
+                    },
+                    location: {
+                        value: location
                     }
                 }
             }
