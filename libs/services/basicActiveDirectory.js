@@ -8,7 +8,7 @@ module.exports = function (program) {
     let exts = new extensions(program.credentials, program.subscription.id);
     let returnObj = {};
 
-    return groups.createWithUri('basicAD', program.location.name, 'https://raw.githubusercontent.com/AzureWorkshops/cli/master/templates/template.json', '1.0.2.0')
+    return groups.createWithUri('basicAD', program.location.name, 'https://raw.githubusercontent.com/AzureWorkshops/cli/master/templates/basicAD.json', '1.0.2.0')
         .then((group) => {
             returnObj.ResourceGroup = group;
             return Promise.resolve();
