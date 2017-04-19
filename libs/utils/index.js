@@ -1,1 +1,0 @@
-exports.executeRest = require('./executeRest');
