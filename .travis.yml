@@ -7,7 +7,6 @@ node_js:
   - "6"
 before_script:
   - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc 2>/dev/null
-  - sed -ir 's/"version": "\([0-9]*\.[0-9]*\)\.[0-9]*"/"version": "\1.${TRAVIS_BUILD_NUMBER}"/g' package.json
 script: 
   - npm publish
 after_script:
