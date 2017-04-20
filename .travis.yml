@@ -17,3 +17,6 @@ notifications:
       - me@jdav.is
     on_success: change
     on_failure: change
+branches:
+  only:
+  - master
