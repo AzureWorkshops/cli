@@ -4,6 +4,13 @@ const msRest = require('ms-rest-azure');
 const prompt = require('co-prompt');
 const ResourceManagement = require('azure-arm-resource');
 
+String.prototype.rpad = function(padString, length) {
+	var str = this;
+    while (str.length < length)
+        str = str + padString;
+    return str;
+}
+
 function* _prompt(maxValue) {
     var value = null;
     while (value == null) {
@@ -13,9 +20,34 @@ function* _prompt(maxValue) {
             process.stdout.write(chalk.red('\nPlease enter a valid choice...'));
             value = null;
         } else {
-            return (value);
+            process.stdin.pause();
+            return value;
         }
     }
+}
+
+function* _regPrompt(userPrompt, regex, errorMessage, defaultValue) {
+    var value = null;
+    process.stdout.write('\n' + chalk.yellow(userPrompt));
+    do {
+        if (defaultValue != null) {
+            value = yield prompt('\n(' + defaultValue + ') > ');
+        } else {
+            value = yield prompt('\n> ');
+        }
+    
+        if (value == '' && defaultValue != null) {
+            value = defaultValue;
+            process.stdin.pause();
+            return defaultValue;
+        } else if (!value.match(regex)) {
+            process.stdout.write(chalk.red('\n' + errorMessage + '...'));
+            value = null;
+        } else {
+            process.stdin.pause();
+            return value;
+        }
+    } while (value == null) 
 }
 
 module.exports = class Config {
@@ -81,5 +113,24 @@ module.exports = class Config {
                     });
                 });
         });
-    };
+    }
+
+    prompt(prompt, regex, errorMessage, defaultValue = null) {
+        return new Promise((resolve, reject) => {
+            co(function* () {
+                return yield _regPrompt(prompt, regex, errorMessage, defaultValue);
+            }).then((response) => {
+                resolve(response);
+            });
+        });
+    }
+
+    printResults(results) {
+        process.stdout.write('\n\n');
+        process.stdout.write(chalk.cyan.yellow('Results:') + '\n');
+        for(var key in results) {
+            process.stdout.write('    ' + chalk.cyan.bold(key.rpad(" ", 30)) + '|    ' + results[key] + '\n');
+        }
+        process.stdout.write('\n');
+    }
 }
