@@ -10,7 +10,7 @@ const Logging = require('./libs/utils/logging');
 let logging = new Logging();
 
 program
-    .version('1.0.0')
+    .version('1.0.2')
     .option('-s, --subscription <id>', 'your subscription id')
     .option('-c, --config <configuration id>', 'id of the base configuration')
     .parse(process.argv);
@@ -26,7 +26,6 @@ co(function* () {
     program.subscription = yield config.getSubscription(subscriptions);
     program.location = yield config.getLocation(program.credentials, program.subscription);
 
-    process.stdin.pause();
 }).then(() => {
     return new Promise((resolve, reject) => {
 

@@ -50,6 +50,12 @@ function _checkExistence(name) {
     return _client.resourceGroups.checkExistence(name);
 }
 
+function _copyParams(params, templateParams) {
+    for (var key in templateParams) {
+        params.properties.parameters[key] = {value: templateParams[key]};
+    }
+}
+
 module.exports = class ResourceGroups {
     constructor(credentials, subscriptionId) {
         _client = new resourceManagement.ResourceManagementClient(credentials, subscriptionId);
@@ -57,7 +63,7 @@ module.exports = class ResourceGroups {
     }
 
     // NOTE: only use when testing locally as templates are loaded remotely from repo
-    create(name, location, template) {
+    create(name, location, template, templateParams) {
         var templateContent = JSON.parse(fs.readFileSync(template, 'utf8'));
 
         var groupParams = {
@@ -79,10 +85,12 @@ module.exports = class ResourceGroups {
             }
         };
 
+        _copyParams(params, templateParams);
+
         return _create(name, groupParams, params);
     }
 
-    createWithUri(name, location, templateUri, templateVer) {
+    createWithUri(name, location, templateUri, templateVer, templateParams) {
         var groupParams = {
             location: location
         };
@@ -104,6 +112,8 @@ module.exports = class ResourceGroups {
                 }
             }
         };
+
+        _copyParams(params, templateParams);
 
         return _create(name, groupParams, params);
     }
