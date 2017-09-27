@@ -93,6 +93,8 @@ module.exports = class Config {
     }
 
     getLocation(credentials, subscription) {
+        console.dir(credentials.tokenCache._entries);
+        console.dir(subscriptions);
         _.remove(credentials.tokenCache._entries, (obj) => {
             return obj.tenantId != subscription.tenantId;
         });
