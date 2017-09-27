@@ -1,6 +1,6 @@
 {
   "name": "azworkshops-cli",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "description": "Azure Workshops CLI",
   "main": "azworkshops.js",
   "bin": {
@@ -29,8 +29,9 @@
     "co": "^4.6.0",
     "co-prompt": "^1.0.0",
     "commander": "^2.9.0",
+    "lodash": "^4.17.4",
     "moment": "^2.18.1",
-    "ms-rest-azure": "^2.1.1",
+    "ms-rest-azure": "^2.3.3",
     "superagent": "^3.5.2"
   }
 }

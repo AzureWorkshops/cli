@@ -3,6 +3,7 @@ const co = require('co');
 const msRest = require('ms-rest-azure');
 const prompt = require('co-prompt');
 const ResourceManagement = require('azure-arm-resource');
+const _ = require('lodash');
 
 String.prototype.rpad = function(padString, length) {
 	var str = this;
@@ -92,6 +93,10 @@ module.exports = class Config {
     }
 
     getLocation(credentials, subscription) {
+        _.remove(credentials.tokenCache._entries, (obj) => {
+            return obj.tenantId != subscription.tenantId;
+        });
+
         let resMgnt = new ResourceManagement.SubscriptionClient(credentials);
 
         return new Promise((resolve, reject) => {
