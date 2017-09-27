@@ -63,10 +63,14 @@ module.exports = class Config {
         return _prompt(1);
     }
 
-    login() {
+    login(domain) {
         return new Promise((resolve, reject) => {
             process.stdout.write('\n');
-            msRest.interactiveLogin((err, credentials, subscriptions) => {
+            let options = new Object();
+            if (domain != null)
+                options.domain = domain.replace(/'/g,'').replace(/"/g,'');
+
+            msRest.interactiveLogin(options, (err, credentials, subscriptions) => {
                 if (err) { reject(err); }
                 else { resolve({ credentials, subscriptions }); }
             });
@@ -93,12 +97,6 @@ module.exports = class Config {
     }
 
     getLocation(credentials, subscription) {
-        console.dir(credentials.tokenCache._entries);
-        console.dir(subscriptions);
-        _.remove(credentials.tokenCache._entries, (obj) => {
-            return obj.tenantId != subscription.tenantId;
-        });
-
         let resMgnt = new ResourceManagement.SubscriptionClient(credentials);
 
         return new Promise((resolve, reject) => {
