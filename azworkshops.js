@@ -15,7 +15,7 @@ program
     .version(pjson.version)
     .option('-s, --subscription <id>', 'your subscription id')
     .option('-c, --config <configuration id>', 'id of the base configuration')
-    .option('-d, --domain <directory id>', 'id of the Active Directory')
+    .option('-d, --domain <directory id>', 'id of your Active Directory tenant')
     .parse(process.argv);
 
 co(function* () {
