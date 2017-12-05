@@ -1,6 +1,6 @@
 {
   "name": "azworkshops-cli",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Azure Workshops CLI",
   "main": "azworkshops.js",
   "bin": {
